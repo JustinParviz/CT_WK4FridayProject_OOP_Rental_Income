@@ -22,17 +22,15 @@
 
 # Theater was comparable to Driver Class. Driver Class and Code should go at the bottom!
 
-class User: # Comparable to User
-    def __init__(self, name):
-        self.title = None
-        self.name = name
+class User(): 
+    def __init__(self, username):
+        self.username = username
         self.property_list = []
 
-        
+       
 
-class Property: # Comparable to Series Class
+class Property(): 
     def __init__(self, name, address):
-        self.title = None
         self.name = name
         self.address = address
         self.total_expenses = 0    # Expenses
@@ -56,8 +54,8 @@ class Property: # Comparable to Series Class
         self.laundry = int(input("Around how much do you think you'll be able to make off of the laundry room? "))
         self.parking = int(input("How much revenue do you think you'll bring in off of charging for monthly parking? "))
         self.total_income = self.rent + self.laundry + self.parking
-        print(f"Ok Great. Now based on you being able to charge {self.rent} per month for the rent, around {self.laundry} a month off of the laundry room, combined with the {self.parking} 
-        in monthly revenue off of the parking, you're projected total income is {self.total_income} for this property.")
+        print(f"Ok Great. Now based on you being able to charge {self.rent} per month for the rent, around {self.laundry} a month off of the laundry room, combined with the {self.parking} in monthly revenue off of the parking, you're projected total income is {self.total_income} for this property.")
+
 
 
     def property_expenses(self): # Have to figure out Total Expenses
@@ -67,19 +65,157 @@ class Property: # Comparable to Series Class
         self.insurance = int(input("How much will you be paying monthly for the insurance? "))
         self.utilities = int(input("And how much do you think your monthly utilities (electricity, water, gas, etc) will cost? "))
         self.total_expenses = self.taxes + self.mortgage + self.insurance + self.utilities
-        print(f"Ok so based on your monthly taxes costing around {self.taxes}, your mortgage of {self.mortgage} per month, {self.insurance} monthly for the insurance, and about 
-        {self.utilities} a month for all of the utilities, your total monthly expenses are expected to be about {self.total_expenses} for this property.")
+        print(f"Ok so based on your monthly taxes costing around {self.taxes}, your mortgage of {self.mortgage} per month, {self.insurance} monthly for the insurance, and about {self.utilities} a month for all of the utilities, your total monthly expenses are expected to be about {self.total_expenses} for this property.")
 
 
-    
+
     def property_roi(self): #ROI = Total Monthly Income - Total Monthly Expenses
         self.total_roi = self.total_income - self.total_expenses
         
         if self.total_roi > 0:
             print(f"Based on all the information you provided, this property is cash flow positive and has a monthly ROI of {self.total_roi}. Congratulations!")
         elif self.total_roi <= 0:
-            print(f"Sorry but based on all the information you provided, this property is cash flow negative since your Total Monthly Expenses of {self.total_expenses} outweighs 
-            your Total Monthly Income of {self.total_income}. Maybe you'd be better off looking at other properties.")
+            print(f"Sorry but based on all the information you provided, this property is cash flow negative since your Total Monthly Expenses of {self.total_expenses} outweighs your Total Monthly Income of {self.total_income}. Maybe you'd be better off looking at other properties.")
+
+
+
+class Investment_properties():
+
+    def __init__(self):
+        self.users = set()
+        self.current_user = None
+
+
+    def add_user(self):
+        username = input("Please enter a username: ")
+        if username in {u.username for u in self.users}:
+            print("User with that name already exists. Please try again!")
+
+        else:
+            # password = input("Please enter your password. ")
+            user = User(username)
+            self.users.add(user)
+            print(f"{user} has been created!!")
+
+        self.login_user()
+
+
+    def login_user(self):
+        username = input("What is your username? ")
+        # password = input("What is your password? ")
+
+        for user in self.users:
+            if user.username == username: # and user.check_password(password):
+                self.current_user = user
+                print(f"{user} has logged in!")
+                break
+
+        else:
+            print("Username is incorrect")
+
+
+    def logout(self):
+        self.current_user = None
+        print("You have succesfully logged out!")
+
+
+    def add_to_property_list(self, query=''):
+        property = Property()
+        property.get_info(query)
+        self.current_user.property_list.append(property)
+
+        print(f"{property.name} has been added to your property list!")
+
+
+    def view_property_list(self):
+        for property in self.current_user.property_list:
+            print(f"\n\n{property} | Properties: {len(property)}")
+            print(f"\nSummary: \n {property.summary}")
+
+
+    def choose_from_property_list(self):
+        self.view_property_list()
+
+        select = input("Which property would you like to select? ")
+        for property in self.current_user.property_list:
+            if property.name.lower() == select.lower().strip():
+                property.select()
+                break
+
+        else:
+            print(f"{select} is not in your property list... please check for any typos that may have occured.")
+               
+
+
+    def run(self):
+        """
+        Method allowing users to sign in, view their property list, and select a property
+        """
         
+        if self.users:
+            self.choose_user()
+        else:
+            self.add_user()
+
+            print("""
+            What would you like to do?
+            Add- add a new user
+            Login - login to a your profile
+            Logout - logout of your profile
+            Select - Pick a property from your property list
+            View - View property list
+            Quit - Close the application           
+            
+            
+            """)
+
+        while True:
+            response = input("What would you like to do? (add, login, logout, select, view, quit) ")
+            
+            if response.lower() == "view":
+                self.view_property_list()
+            elif response.lower() == "select":
+                self.choose_from_property_list()
+            elif response.lower() == "add":
+                self.add_user()
+            elif response.lower() == 'logout':
+                self.logout()
+                new_response = input("What would you like to do next? login, add, or quit")
+                if new_response.lower() == 'add':
+                    self.add_user()
+                elif new_response.lower() == 'login':
+                    self.login_user()
+                elif new_response.lower() == 'quit':
+                    print("Thanks for viewing your Investment Properties!")
+                    break
+                else:
+                    print("Please enter a valid response and try again!")
+            elif response.lower() == 'login':
+                self.login_user()
+                    
+                     
+            elif response.lower() == "quit":
+                print(f"Thanks for viewing your Investment Properties! Have a great day {self.current_user}!")
+                break
+            else:
+                print("Invalid Input: please choose from the list!")
+        
+
+
+
+RyanLane = Investment_properties()
+RyanLane.run()
+
+
+
+
+
+
+
+
+
+
+
+
 
 
